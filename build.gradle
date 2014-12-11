@@ -1,0 +1,75 @@
+defaultTasks 'Build'
+
+sourceCompatibility = 1.5
+version = '1.0'
+
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'findbugs'
+    apply plugin: 'checkstyle'
+    apply plugin: 'idea'
+
+    repositories {
+        mavenCentral()
+    }
+
+    compileJava.dependsOn clean
+
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'findbugs'
+    apply plugin: 'checkstyle'
+
+    findbugsMain {
+        reports {
+            html {
+                enabled = true
+                destination "${buildDir}/reports/findbugs/findbugs.html"
+            }
+            xml {
+                enabled = false
+            }
+        }
+    }
+
+    findbugsTest {
+        reports {
+            html {
+                enabled = true
+                destination "${buildDir}/reports/findbugs/findbugs_test.html"
+            }
+            xml {
+                enabled = false
+            }
+        }
+    }
+
+    checkstyle {
+        configFile = file("${project.rootDir}/config/checkstyle/checkstyle.xml")
+        configProperties.checkstyleSuppressionFile = file("${project.rootDir}/config/checkstyle/suppressions.xml")
+    }
+
+    task checkstyleReport << {
+        if (file("${buildDir}/reports/checkstyle/${checkType}.xml").exists()) {
+            ant.xslt(in: "${buildDir}/reports/checkstyle/${project.ext.checkType}.xml",
+                    style: "${project.rootDir}/config/checkstyle/checkstyle.xsl",
+                    out: "${buildDir}/reports/checkstyle/checkstyle_${project.ext.checkType}.html")
+        }
+    }
+
+    gradle.taskGraph.afterTask {Task task, TaskState state ->
+        if (state.failure) {
+            if (task.name in ['checkstyleMain', 'checkstyleTest']) {
+                checkstyleReport {
+                    def matcher = task.name =~ /^checkstyle(.*)$/
+                    if (matcher.matches()) {
+                        project.ext.checkType = matcher.group(1).toLowerCase()
+                    }
+                }
+                checkstyleReport.execute()
+            }
+        }
+    }
+}
