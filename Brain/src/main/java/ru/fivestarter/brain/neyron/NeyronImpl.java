@@ -5,4 +5,8 @@ package ru.fivestarter.brain.neyron;
  * @version 11.12.2014
  */
 public class NeyronImpl implements Neyron {
+    @Override
+    public void signal() {
+
+    }
 }
