@@ -7,8 +7,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import ru.fivestarter.brain.neyron.Effector;
-import ru.fivestarter.brain.neyron.Neyron;
-import ru.fivestarter.brain.neyron.NeyronImpl;
+import ru.fivestarter.brain.neyron.Neuron;
+import ru.fivestarter.brain.neyron.NeuronImpl;
 import ru.fivestarter.brain.observer.Observer;
 
 /**
@@ -18,24 +18,24 @@ import ru.fivestarter.brain.observer.Observer;
 public class BrainImpl implements Brain, Observer {
     private static final int NEYRONS_NUMBER = 10;
 
-    private Neyron sensor;
-    private Neyron effector;
-    private List<Neyron> neyronList;
+    private Neuron sensor;
+    private Neuron effector;
+    private List<Neuron> neuronList;
     private SynapseManager synapseManager;
 
     public BrainImpl() {
         synapseManager = new SynapseManagerImpl();
 
-        sensor = new NeyronImpl();
+        sensor = new NeuronImpl();
         sensor.registerObserver((Observer) synapseManager);
 
         effector = new Effector();
         effector.registerObserver(this);
         initNeyronList((Observer) synapseManager);
 
-        Set<Neyron> affectedNeyrons = Sets.newHashSet(neyronList);
-        affectedNeyrons.add(effector);
-        synapseManager.init(affectedNeyrons);
+        Set<Neuron> affectedNeurons = Sets.newHashSet(neuronList);
+        affectedNeurons.add(effector);
+        synapseManager.init(affectedNeurons);
 
     }
 
@@ -50,16 +50,16 @@ public class BrainImpl implements Brain, Observer {
     }
 
     @Override
-    public void update(Neyron neyron) {
+    public void update(Neuron neuron) {
         action();
     }
 
     private void initNeyronList(Observer observer) {
-        neyronList = Lists.newArrayList();
+        neuronList = Lists.newArrayList();
         for (int i = 0; i < NEYRONS_NUMBER; i++) {
-            Neyron neyron = new NeyronImpl();
-            neyron.registerObserver(observer);
-            neyronList.add(neyron);
+            Neuron neuron = new NeuronImpl();
+            neuron.registerObserver(observer);
+            neuronList.add(neuron);
         }
     }
 }

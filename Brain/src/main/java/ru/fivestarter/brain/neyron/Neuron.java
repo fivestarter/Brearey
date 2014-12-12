@@ -9,7 +9,7 @@ import ru.fivestarter.brain.observer.Subject;
  * @author <a href='mailto:ystartsev@wiley.com'>Yury Startsev</a>
  * @version 11.12.2014
  */
-public interface Neyron extends Subject, Observer {
-    void addEffected(Neyron neyron);
-    Set<Neyron> getEffected();
+public interface Neuron extends Subject, Observer {
+    void addEffected(Neuron neuron);
+    Set<Neuron> getEffected();
 }

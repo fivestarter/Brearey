@@ -10,7 +10,7 @@ import ru.fivestarter.brain.observer.Observer;
  * @author <a href='mailto:ystartsev@wiley.com'>Yury Startsev</a>
  * @version 11.12.2014
  */
-public abstract class AbstractNeyron implements Neyron {
+public abstract class AbstractNeuron implements Neuron {
     List<Observer> observers = Lists.newArrayList();
 
     @Override

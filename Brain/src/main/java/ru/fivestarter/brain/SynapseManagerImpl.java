@@ -5,7 +5,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-import ru.fivestarter.brain.neyron.Neyron;
+import ru.fivestarter.brain.neyron.Neuron;
 import ru.fivestarter.brain.observer.Observer;
 
 /**
@@ -13,32 +13,32 @@ import ru.fivestarter.brain.observer.Observer;
  * @version 11.12.2014
  */
 public class SynapseManagerImpl implements SynapseManager, Observer {
-    Set<Neyron> targetNeyrons;
+    Set<Neuron> targetNeurons;
 
     @Override
-    public void update(Neyron neyron) {
-        Set<Neyron> availableNeyrons = getAvailableNeyrons(neyron);
-        Neyron randomNeyron = getRandomNeyron(availableNeyrons);
-        neyron.addEffected(randomNeyron);
-        randomNeyron.update(neyron);
+    public void update(Neuron neuron) {
+        Set<Neuron> availableNeurons = getAvailableNeyrons(neuron);
+        Neuron randomNeuron = getRandomNeyron(availableNeurons);
+        neuron.addEffected(randomNeuron);
+        randomNeuron.update(neuron);
     }
 
-    public void init(Set<Neyron> targetNeyrons) {
-        this.targetNeyrons = targetNeyrons;
+    public void init(Set<Neuron> targetNeurons) {
+        this.targetNeurons = targetNeurons;
     }
 
-    private Set<Neyron> getAvailableNeyrons(Neyron initiator) {
-        Set<Neyron> ret = Sets.newHashSet(targetNeyrons);
+    private Set<Neuron> getAvailableNeyrons(Neuron initiator) {
+        Set<Neuron> ret = Sets.newHashSet(targetNeurons);
         ret.remove(initiator);
         ret.removeAll(initiator.getEffected());
         return ret;
     }
 
-    private Neyron getRandomNeyron(Set<Neyron> neyrons) {
-        int item = new Random().nextInt(neyrons.size());
+    private Neuron getRandomNeyron(Set<Neuron> neurons) {
+        int item = new Random().nextInt(neurons.size());
         int i = 0;
-        Neyron ret = null;
-        for (Neyron obj : neyrons) {
+        Neuron ret = null;
+        for (Neuron obj : neurons) {
             if (i == item) {
                 ret = obj;
                 break;
