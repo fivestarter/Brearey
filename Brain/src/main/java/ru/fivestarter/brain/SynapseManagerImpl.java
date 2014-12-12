@@ -6,21 +6,20 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 
 import ru.fivestarter.brain.neyron.Neuron;
-import ru.fivestarter.brain.observer.Observer;
 
 /**
  * @author <a href='mailto:ystartsev@wiley.com'>Yury Startsev</a>
  * @version 11.12.2014
  */
-public class SynapseManagerImpl implements SynapseManager, Observer {
+public class SynapseManagerImpl implements SynapseManager {
     Set<Neuron> targetNeurons;
 
     @Override
     public void update(Neuron neuron) {
         Set<Neuron> availableNeurons = getAvailableNeyrons(neuron);
         Neuron randomNeuron = getRandomNeyron(availableNeurons);
-        neuron.addEffected(randomNeuron);
-        randomNeuron.update(neuron);
+        neuron.registerObserver(randomNeuron);
+        randomNeuron.notifyObserver(neuron);
     }
 
     public void init(Set<Neuron> targetNeurons) {
@@ -30,7 +29,7 @@ public class SynapseManagerImpl implements SynapseManager, Observer {
     private Set<Neuron> getAvailableNeyrons(Neuron initiator) {
         Set<Neuron> ret = Sets.newHashSet(targetNeurons);
         ret.remove(initiator);
-        ret.removeAll(initiator.getEffected());
+        ret.removeAll(initiator.getObservers());
         return ret;
     }
 

@@ -9,13 +9,12 @@ import com.google.common.collect.Sets;
 import ru.fivestarter.brain.neyron.Effector;
 import ru.fivestarter.brain.neyron.Neuron;
 import ru.fivestarter.brain.neyron.NeuronImpl;
-import ru.fivestarter.brain.observer.Observer;
 
 /**
  * @author <a href='mailto:ystartsev@wiley.com'>Yury Startsev</a>
  * @version 11.12.2014
  */
-public class BrainImpl implements Brain, Observer {
+public class BrainImpl implements Brain {
     private static final int NEYRONS_NUMBER = 10;
 
     private Neuron sensor;
@@ -27,11 +26,10 @@ public class BrainImpl implements Brain, Observer {
         synapseManager = new SynapseManagerImpl();
 
         sensor = new NeuronImpl();
-        sensor.registerObserver((Observer) synapseManager);
+        sensor.registerObserver((Neuron) synapseManager);
 
-        effector = new Effector();
-        effector.registerObserver(this);
-        initNeyronList((Observer) synapseManager);
+        effector = new Effector(this);
+        initNeyronList((Neuron) synapseManager);
 
         Set<Neuron> affectedNeurons = Sets.newHashSet(neuronList);
         affectedNeurons.add(effector);
@@ -41,7 +39,7 @@ public class BrainImpl implements Brain, Observer {
 
     @Override
     public void feel() {
-        sensor.update(null);
+        sensor.notifyObserver(null);
     }
 
     @Override
@@ -54,7 +52,7 @@ public class BrainImpl implements Brain, Observer {
         action();
     }
 
-    private void initNeyronList(Observer observer) {
+    private void initNeyronList(Neuron observer) {
         neuronList = Lists.newArrayList();
         for (int i = 0; i < NEYRONS_NUMBER; i++) {
             Neuron neuron = new NeuronImpl();
