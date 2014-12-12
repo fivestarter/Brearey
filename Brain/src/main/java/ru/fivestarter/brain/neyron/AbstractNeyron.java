@@ -26,7 +26,7 @@ public abstract class AbstractNeyron implements Neyron {
     @Override
     public void notifyObserver() {
         for (Observer observer : observers) {
-            observer.notify();
+            observer.update(this);
         }
     }
 }

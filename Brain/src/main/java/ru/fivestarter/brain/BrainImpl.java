@@ -1,13 +1,14 @@
 package ru.fivestarter.brain;
 
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import ru.fivestarter.brain.neyron.Effector;
 import ru.fivestarter.brain.neyron.Neyron;
 import ru.fivestarter.brain.neyron.NeyronImpl;
-import ru.fivestarter.brain.neyron.Sensor;
 import ru.fivestarter.brain.observer.Observer;
 
 /**
@@ -20,19 +21,27 @@ public class BrainImpl implements Brain, Observer {
     private Neyron sensor;
     private Neyron effector;
     private List<Neyron> neyronList;
-    private SynapseManager synapseManager = new SynapseManagerImpl();
+    private SynapseManager synapseManager;
 
-    public void init() {
-        sensor = new Sensor();
+    public BrainImpl() {
+        synapseManager = new SynapseManagerImpl();
+
+        sensor = new NeyronImpl();
         sensor.registerObserver((Observer) synapseManager);
+
         effector = new Effector();
         effector.registerObserver(this);
         initNeyronList((Observer) synapseManager);
+
+        Set<Neyron> affectedNeyrons = Sets.newHashSet(neyronList);
+        affectedNeyrons.add(effector);
+        synapseManager.init(affectedNeyrons);
+
     }
 
     @Override
     public void feel() {
-        sensor.signal();
+        sensor.update(null);
     }
 
     @Override
@@ -41,7 +50,7 @@ public class BrainImpl implements Brain, Observer {
     }
 
     @Override
-    public void update() {
+    public void update(Neyron neyron) {
         action();
     }
 
